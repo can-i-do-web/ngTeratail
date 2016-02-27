@@ -84,7 +84,7 @@ angular.module('myApp', [])
 
   .controller('appCtrl', [function(){
     this.clickButton = function(){
-      alert('click!!')
+      alert('click!!');
     };
   }]);
   
@@ -148,6 +148,13 @@ angular.module('myApp', [])
 ## クリックしたら 打ち消し線で消そう
 
 ```
+  .done{
+    text-decoration: line-through;
+  }
+```
+
+
+```
 <li ng-repeat="item in app.list">
   <span
     ng-click="app.clickList(item)
@@ -172,7 +179,9 @@ this.clickList = function(item){
 + 削除ボタンを追加する
 
 ```
+<li>...
 <button ng-click="app.clickDeleteButton(item)" ng-show="item.done">X</button>
+...</li>
 ```
 
 ```
