@@ -12,11 +12,14 @@ ngDemo
 + HTML の記述
 + Angular の読み込み(CDN)
 
+  `https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js`
+
+
 参考までに開いておきましょう
 
 [API Document](https://docs.angularjs.org/api)
 
-## ローカルサーバを起動する
+## ローカルサーバを起動する(できない場合は file://... でOK)
 
 Python
 ```
@@ -51,12 +54,14 @@ localhost:8000 にアクセス
 + currency
 + currency(show '¥')
 + currency(calc tax)
-+ number
+
+```
+{{ todo | currency: '¥': 0 }}
+```
 
 ## Form Validation 
 
 + required min-length max-length
-+ number, url も試してみる
 + form と name 追加する
 + エラーメッセージを追加する
 + ボタンを作成する
@@ -75,22 +80,23 @@ localhost:8000 にアクセス
 
 + appCtrl つくる
 ```
-<script>
-(function(){
-angular.module('myApp')
+angular.module('myApp', [])
+
   .controller('appCtrl', [function(){
-    
-  }])
-})();
+    this.clickButton = function(){
+      alert('click!!')
+    };
+  }]);
+  
 ```
 
 + ng-controller で紐付ける
 
     `<body ng-controller="appCtrl as app">`
 
-    `<input type="text" name="todo" ng-model="app.todo.name">`
+    `<input type="text" name="todo" ng-model="app.todo.name" required>`
 
-    `<button ng-click="app.clickButton()">click!!</button>`
+    `<button ng-click="app.clickButton()" ng-disabled="todoForm.todoName.$invalid">click!!</button>`
 
 
 + ボタンを押して click!! とアラートが表示されればOK!
@@ -99,15 +105,17 @@ angular.module('myApp')
 
 + list に入力した文字を保存しておく
 ```
-angular.module('myApp')
+angular.module('myApp', [])
+  
   .controller('appCtrl', [function(){
     this.list = [];
     this.clickButton = function(){
       this.todo.date = Date.now();
-      this.list.push(this.todo.date)
+      this.list.push(this.todo)
       this.todo = {};
     }
-  }])
+  }]);
+
 ```
 
 + 入力した文字を表示させる
@@ -123,7 +131,7 @@ angular.module('myApp')
 ```
 <ul>
   <li ng-repeat="item in app.list">
-    {{item.name}} - {{item.date | date: 'yyyy/MM/dd HH:mm:ss'}}
+    <span>{{item.name}} - {{item.date | date: 'yyyy/MM/dd HH:mm:ss'}}</span>
   </li>
 </ul>
 ```
@@ -140,10 +148,11 @@ angular.module('myApp')
 ## クリックしたら 打ち消し線で消そう
 
 ```
-<li ...
-ng-click="app.clickList(item)
-ng-class="{done: item.done}
->
+<li ng-repeat="item in app.list">
+  <span
+    ng-click="app.clickList(item)
+    ng-class="{done: item.done} >...</span>
+</li>
 ```
 
 ```
@@ -167,24 +176,29 @@ this.clickList = function(item){
 ```
 
 ```
-this.list = [];
-this.clickButton = function(){
-  this.todo.date = Date.now();
-  this.list.push(this.todo)
-  this.todo = {};
-}
-this.clickDeleteButton = function(item){
-  var idx = this.list.indexOf(item);
-  if(idx >=0){
-    this.list.splice(idx, 1);
-  }
-}
+angular.module('myApp', [])
+  
+  .controller('appCtrl', [function(){
+    this.list = [];
+    this.clickButton = function(){
+      this.todo.date = Date.now();
+      this.list.push(this.todo)
+      this.todo = {};
+    }
+    this.clickDeleteButton = function(item){
+      var idx = this.list.indexOf(item);
+      if(idx >=0){
+        this.list.splice(idx, 1);
+      }
+    }
+    
+  }]);
 ```
 
 ## 最後は Component 化！
 
 ```
-angular.module('myApp')
+angular.module('myApp', [])
   .component('todo', {
     controllerAs: 'app',
     controller: function(){
@@ -208,3 +222,5 @@ angular.module('myApp')
   })
 })();
 ```
+
+※ file:// の人は template: `...`
